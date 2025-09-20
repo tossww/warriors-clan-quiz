@@ -5,6 +5,7 @@ export interface Clan {
   traits: string[];
   characteristics: string[];
   color: string;
+  icon: string;
   description: string;
 }
 

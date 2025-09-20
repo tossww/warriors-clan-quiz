@@ -59,12 +59,12 @@ export const getClanColorVariables = (): { [key: string]: string } => {
   const variables: { [key: string]: string } = {};
   
   // Add each clan color as a CSS custom property
-  variables['--color-thunderclan'] = '#2D5016';
-  variables['--color-riverclan'] = '#1E3A8A';
-  variables['--color-windclan'] = '#B45309';
-  variables['--color-shadowclan'] = '#4C1D95';
-  variables['--color-skyclan'] = '#EA580C';
-  variables['--color-tribe'] = '#64748B';
+  variables['--color-thunderclan'] = '#059669';
+  variables['--color-riverclan'] = '#0284C7';
+  variables['--color-windclan'] = '#EAB308';
+  variables['--color-shadowclan'] = '#7C3AED';
+  variables['--color-skyclan'] = '#DC2626';
+  variables['--color-tribe'] = '#475569';
   
   return variables;
 };

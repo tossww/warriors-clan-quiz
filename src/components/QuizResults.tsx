@@ -1,11 +1,40 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { useQuizStore } from '@/hooks/useQuizStore';
+import { generateClanImage } from '@/utils/imageGeneration';
 
 export default function QuizResults() {
-  const { getQuizResult, resetQuiz } = useQuizStore();
+  const { getQuizResult, resetQuiz, selectedAnswers } = useQuizStore();
   const result = getQuizResult();
+  const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
+  const [imageLoading, setImageLoading] = useState(true);
+
+  useEffect(() => {
+    if (result) {
+      const generateImage = async () => {
+        try {
+          setImageLoading(true);
+          const userAnswers = Object.values(selectedAnswers);
+          const imageUrl = await generateClanImage({ 
+            clan: result.winningClan, 
+            userAnswers 
+          });
+          setGeneratedImageUrl(imageUrl);
+        } catch (error) {
+          console.error('Failed to generate image:', error);
+          // Fallback to clan color placeholder
+          const color = result.winningClan.color.replace('#', '');
+          setGeneratedImageUrl(`https://via.placeholder.com/400x400/${color}/FFFFFF?text=${encodeURIComponent(result.winningClan.name)}`);
+        } finally {
+          setImageLoading(false);
+        }
+      };
+
+      generateImage();
+    }
+  }, [result, selectedAnswers]);
 
   if (!result) {
     return <div>Loading results...</div>;
@@ -32,11 +61,33 @@ export default function QuizResults() {
         transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
         className="mb-8"
       >
-        <div
-          className="w-32 h-32 mx-auto rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-2xl"
-          style={{ backgroundColor: winningClan.color }}
-        >
-          {winningClan.name.charAt(0)}
+        <div className="w-40 h-40 mx-auto rounded-full overflow-hidden shadow-2xl border-4 border-white">
+          {imageLoading ? (
+            <div
+              className="w-full h-full flex items-center justify-center text-white text-4xl font-bold"
+              style={{ backgroundColor: winningClan.color }}
+            >
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+            </div>
+          ) : generatedImageUrl ? (
+            <img
+              src={generatedImageUrl}
+              alt={`${winningClan.name} generated image`}
+              className="w-full h-full object-cover"
+              onError={() => {
+                // Fallback to clan icon if image fails to load
+                const color = winningClan.color.replace('#', '');
+                setGeneratedImageUrl(`https://via.placeholder.com/400x400/${color}/FFFFFF?text=${encodeURIComponent(winningClan.icon || winningClan.name)}`);
+              }}
+            />
+          ) : (
+            <div
+              className="w-full h-full flex items-center justify-center text-white text-4xl font-bold"
+              style={{ backgroundColor: winningClan.color }}
+            >
+              {winningClan.icon || winningClan.name.charAt(0)}
+            </div>
+          )}
         </div>
       </motion.div>
 
