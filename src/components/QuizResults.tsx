@@ -5,6 +5,26 @@ import { useEffect, useState } from 'react';
 import { useQuizStore } from '@/hooks/useQuizStore';
 import { generateClanImage } from '@/utils/imageGeneration';
 import { clans } from '@/data/clans';
+import { Clan } from '@/types';
+
+// Create SVG fallback image for clans
+const createClanImageSVG = (clan: Clan): string => {
+  const svg = `
+    <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:${clan.color};stop-opacity:1" />
+          <stop offset="100%" style="stop-color:${clan.color};stop-opacity:0.8" />
+        </linearGradient>
+      </defs>
+      <circle cx="80" cy="80" r="80" fill="url(#grad)"/>
+      <text x="80" y="90" text-anchor="middle" fill="white" font-size="48" font-weight="bold">${clan.icon || clan.name.charAt(0)}</text>
+      <text x="80" y="140" text-anchor="middle" fill="white" font-size="12" font-weight="bold">${clan.name}</text>
+    </svg>
+  `;
+  
+  return `data:image/svg+xml;base64,${btoa(svg)}`;
+};
 
 export default function QuizResults() {
   const { getQuizResult, resetQuiz, selectedAnswers } = useQuizStore();
@@ -14,22 +34,26 @@ export default function QuizResults() {
 
   useEffect(() => {
     if (result) {
+      // Set immediate SVG fallback
+      const svgFallback = createClanImageSVG(result.winningClan);
+      setGeneratedImageUrl(svgFallback);
+      setImageLoading(false);
+
+      // Try to generate better image in background
       const generateImage = async () => {
         try {
-          setImageLoading(true);
           const userAnswers = Object.values(selectedAnswers);
           const imageUrl = await generateClanImage({ 
             clan: result.winningClan, 
             userAnswers 
           });
-          setGeneratedImageUrl(imageUrl);
+          // Only update if we got a different/better image
+          if (imageUrl && imageUrl !== svgFallback) {
+            setGeneratedImageUrl(imageUrl);
+          }
         } catch (error) {
           console.error('Failed to generate image:', error);
-          // Fallback to clan color placeholder
-          const color = result.winningClan.color.replace('#', '');
-          setGeneratedImageUrl(`https://via.placeholder.com/400x400/${color}/FFFFFF?text=${encodeURIComponent(result.winningClan.name)}`);
-        } finally {
-          setImageLoading(false);
+          // Keep the SVG fallback we already set
         }
       };
 
@@ -76,9 +100,9 @@ export default function QuizResults() {
               alt={`${winningClan.name} generated image`}
               className="w-full h-full object-cover"
               onError={() => {
-                // Fallback to clan icon if image fails to load
-                const color = winningClan.color.replace('#', '');
-                setGeneratedImageUrl(`https://via.placeholder.com/400x400/${color}/FFFFFF?text=${encodeURIComponent(winningClan.icon || winningClan.name)}`);
+                // Fallback to beautiful SVG if image fails to load
+                const svgFallback = createClanImageSVG(winningClan);
+                setGeneratedImageUrl(svgFallback);
               }}
             />
           ) : (
