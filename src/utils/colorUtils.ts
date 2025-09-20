@@ -46,7 +46,7 @@ export const getBackgroundColor = (colorTint: ColorTint | null): string => {
 /**
  * Gets text color that maintains contrast with background
  */
-export const getTextColor = (backgroundColor: string): string => {
+export const getTextColor = (): string => {
   // For now, return dark text for all backgrounds
   // In the future, we could calculate luminance and adjust accordingly
   return '#1f2937'; // Tailwind gray-800

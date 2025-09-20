@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { QuizState, Question, Answer, ColorTint, QuizResult } from '@/types';
-import { questions, getRandomQuestions, shuffleAnswers } from '@/data/questions';
+import { getRandomQuestions, shuffleAnswers } from '@/data/questions';
 import { clans, getClanById } from '@/data/clans';
 
 interface QuizStore extends QuizState {

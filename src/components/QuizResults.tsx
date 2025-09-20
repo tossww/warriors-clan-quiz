@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useQuizStore } from '@/hooks/useQuizStore';
 import { generateClanImage } from '@/utils/imageGeneration';
+import { clans } from '@/data/clans';
 
 export default function QuizResults() {
   const { getQuizResult, resetQuiz, selectedAnswers } = useQuizStore();
@@ -154,8 +155,7 @@ export default function QuizResults() {
           {Object.entries(scores)
             .sort(([, a], [, b]) => b - a)
             .map(([clanId, score]) => {
-              const { getClanById } = require('@/data/clans');
-              const clan = getClanById(clanId);
+              const clan = clans.find(c => c.id === clanId);
               if (!clan) return null;
               
               const clanPercentage = Math.round((score / totalQuestions) * 100);

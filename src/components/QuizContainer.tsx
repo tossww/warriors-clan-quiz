@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { useQuizStore } from '@/hooks/useQuizStore';
 import BackgroundTint from './BackgroundTint';
 import QuizQuestion from './QuizQuestion';
