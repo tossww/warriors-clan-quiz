@@ -26,39 +26,13 @@ const generateIconPrompt = (clan: Clan): string => {
 };
 
 /**
- * Generate clan icon using Google API
+ * Generate clan icon using SVG fallbacks (API disabled to prevent errors)
  */
 export const generateClanIcon = async (clan: Clan): Promise<string> => {
-  const cacheKey = `icon_${clan.id}`;
-  
-  // Check cache first
-  const cachedIcon = iconCache.get(cacheKey);
-  if (cachedIcon && isCacheValid(cachedIcon)) {
-    console.log(`Using cached icon for ${clan.name}`);
-    return cachedIcon.url;
-  }
-
-  try {
-    console.log(`Generating new icon for ${clan.name}`);
-    const prompt = generateIconPrompt(clan);
-    const iconUrl = await callIconGenerationAPI(prompt);
-
-    // Cache the result
-    const generatedIcon: GeneratedIcon = {
-      url: iconUrl,
-      cacheKey,
-      timestamp: Date.now(),
-    };
-    
-    iconCache.set(cacheKey, generatedIcon);
-    
-    return iconUrl;
-  } catch (error) {
-    console.error(`Failed to generate icon for ${clan.name}:`, error);
-    
-    // Return a beautiful SVG fallback icon
-    return createSVGIcon(clan);
-  }
+  // For now, always use beautiful SVG fallbacks to prevent API errors
+  // This ensures stable, fast loading icons without external API dependencies
+  console.log(`Using SVG fallback icon for ${clan.name}`);
+  return createSVGIcon(clan);
 };
 
 /**

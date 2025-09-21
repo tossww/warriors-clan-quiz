@@ -82,40 +82,15 @@ const callGoogleImageAPI = async (prompt: string): Promise<string> => {
 };
 
 /**
- * Generate clan image with caching
+ * Generate clan image using local fallbacks (API disabled to prevent errors)
  */
 export const generateClanImage = async (options: ImageGenerationOptions): Promise<string> => {
-  const { clan, userAnswers } = options;
-  const cacheKey = generateCacheKey(clan, userAnswers);
-
-  // Check cache first
-  const cachedImage = imageCache.get(cacheKey);
-  if (cachedImage && isCacheValid(cachedImage)) {
-    console.log(`Using cached image for ${clan.name}`);
-    return cachedImage.url;
-  }
-
-  try {
-    console.log(`Generating new image for ${clan.name}`);
-    const prompt = generatePrompt(clan);
-    const imageUrl = await callGoogleImageAPI(prompt);
-
-    // Cache the result
-    const generatedImage: GeneratedImage = {
-      url: imageUrl,
-      cacheKey,
-      timestamp: Date.now(),
-    };
-    
-    imageCache.set(cacheKey, generatedImage);
-    
-    return imageUrl;
-  } catch (error) {
-    console.error('Failed to generate image:', error);
-    
-    // Return a beautiful clan-specific placeholder with the clan icon and color
-    return createClanPlaceholder(clan);
-  }
+  const { clan } = options;
+  
+  // For now, always use beautiful local fallbacks to prevent API errors
+  // This ensures stable, fast loading images without external API dependencies
+  console.log(`Using local fallback image for ${clan.name}`);
+  return createClanPlaceholder(clan);
 };
 
 /**

@@ -34,32 +34,14 @@ export default function QuizResults() {
 
   useEffect(() => {
     if (result && result.winningClan) {
-      // Set immediate SVG fallback
+      // Always use beautiful SVG fallback to prevent API errors
       const svgFallback = createClanImageSVG(result.winningClan);
       setGeneratedImageUrl(svgFallback);
       setImageLoading(false);
-
-      // Try to generate better image in background
-      const generateImage = async () => {
-        try {
-          const userAnswers = Object.values(selectedAnswers);
-          const imageUrl = await generateClanImage({ 
-            clan: result.winningClan, 
-            userAnswers 
-          });
-          // Only update if we got a different/better image
-          if (imageUrl && imageUrl !== svgFallback) {
-            setGeneratedImageUrl(imageUrl);
-          }
-        } catch (error) {
-          console.error('Failed to generate image:', error);
-          // Keep the SVG fallback we already set
-        }
-      };
-
-      generateImage();
+      
+      console.log(`Using SVG fallback for ${result.winningClan.name}`);
     }
-  }, [result, selectedAnswers]);
+  }, [result]);
 
   if (!result) {
     return (
