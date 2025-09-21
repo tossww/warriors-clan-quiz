@@ -109,3 +109,4 @@ async function callVertexAIImagen(prompt: string, apiKey: string): Promise<strin
   return data.predictions[0].bytesBase64Encoded;
 }
 */
+

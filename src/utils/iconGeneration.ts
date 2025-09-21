@@ -162,3 +162,4 @@ export const preloadClanIcons = async (clans: Clan[]): Promise<void> => {
     console.error('Error preloading icons:', error);
   }
 };
+

@@ -143,3 +143,4 @@ export const getRandomQuestions = (count: number = 10): Question[] => {
 export const shuffleAnswers = (answers: Question['answers']): Question['answers'] => {
   return [...answers].sort(() => Math.random() - 0.5);
 };
+
