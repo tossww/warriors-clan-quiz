@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useQuizStore } from '@/hooks/useQuizStore';
-import { generateClanImage } from '@/utils/imageGeneration';
 import { clans } from '@/data/clans';
 import { Clan } from '@/types';
 

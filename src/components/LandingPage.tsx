@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { clans } from '@/data/clans';
-import { generateClanIcon } from '@/utils/iconGeneration';
 
 interface LandingPageProps {
   onStartQuiz: () => void;
@@ -13,21 +12,20 @@ export default function LandingPage({ onStartQuiz }: LandingPageProps) {
   const [clanIcons, setClanIcons] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
-    // Generate icons for all clans
-    const loadIcons = async () => {
-      const iconPromises = clans.map(async (clan) => {
-        try {
-          const iconUrl = await generateClanIcon(clan);
-          return { [clan.id]: iconUrl };
-        } catch (error) {
-          console.error(`Failed to load icon for ${clan.name}:`, error);
-          // Return SVG fallback
-          return { [clan.id]: `data:image/svg+xml;base64,${btoa(`<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="${clan.color}"/><text x="20" y="26" text-anchor="middle" fill="white" font-size="16" font-weight="bold">${clan.name.charAt(0)}</text></svg>`)}` };
-        }
+    // Use direct SVG fallbacks for all clans to prevent API calls
+    const loadIcons = () => {
+      const iconMap: { [key: string]: string } = {};
+      
+      clans.forEach(clan => {
+        // Create beautiful SVG icon directly without API calls
+        iconMap[clan.id] = `data:image/svg+xml;base64,${btoa(`
+          <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="20" fill="${clan.color}"/>
+            <text x="20" y="26" text-anchor="middle" fill="white" font-size="16" font-weight="bold">${clan.name.charAt(0)}</text>
+          </svg>
+        `)}`;
       });
-
-      const iconResults = await Promise.all(iconPromises);
-      const iconMap = iconResults.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+      
       setClanIcons(iconMap);
     };
 
