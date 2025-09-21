@@ -32,8 +32,8 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
   ...initialState,
 
   initializeQuiz: () => {
-    // Get 10 random questions from the pool of 11
-    const selectedQuestions = getRandomQuestions(10);
+    // Get 3 random questions from the pool for testing (was 10)
+    const selectedQuestions = getRandomQuestions(3);
     
     // Initialize clan scores
     const clanScores: { [clanId: string]: number } = {};
@@ -113,7 +113,12 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
   },
 
   resetQuiz: () => {
+    // Reset to initial state and immediately reinitialize
     set(initialState);
+    // Use setTimeout to ensure state has been reset before reinitializing
+    setTimeout(() => {
+      get().initializeQuiz();
+    }, 0);
   },
 
   getCurrentQuestion: () => {
@@ -174,6 +179,23 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
     const state = get();
     if (!state.isComplete) return null;
 
+    // Ensure we have scores and questions
+    if (!state.clanScores || Object.keys(state.clanScores).length === 0) {
+      console.error('No clan scores available');
+      return null;
+    }
+
+    if (!state.randomizedQuestions || state.randomizedQuestions.length === 0) {
+      console.error('No questions available');
+      return null;
+    }
+
+    // Ensure we have at least some answers selected
+    if (!state.selectedAnswers || Object.keys(state.selectedAnswers).length === 0) {
+      console.error('No answers selected');
+      return null;
+    }
+
     // Find winning clan
     let maxScore = 0;
     let winningClanId = '';
@@ -185,8 +207,28 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
       }
     });
 
+    // Handle tie-breaker - if no clear winner, pick first clan with max score
+    if (winningClanId === '') {
+      const maxScoreEntries = Object.entries(state.clanScores).filter(([, score]) => score === maxScore);
+      if (maxScoreEntries.length > 0) {
+        winningClanId = maxScoreEntries[0][0];
+      }
+    }
+
     const winningClan = getClanById(winningClanId);
-    if (!winningClan) return null;
+    if (!winningClan) {
+      console.error(`Winning clan not found for ID: ${winningClanId}`);
+      // Fallback to first clan if something goes wrong
+      const fallbackClan = clans[0];
+      if (fallbackClan) {
+        return {
+          winningClan: fallbackClan,
+          scores: state.clanScores,
+          totalQuestions: state.randomizedQuestions.length,
+        };
+      }
+      return null;
+    }
 
     return {
       winningClan,

@@ -33,7 +33,7 @@ export default function QuizResults() {
   const [imageLoading, setImageLoading] = useState(true);
 
   useEffect(() => {
-    if (result) {
+    if (result && result.winningClan) {
       // Set immediate SVG fallback
       const svgFallback = createClanImageSVG(result.winningClan);
       setGeneratedImageUrl(svgFallback);
@@ -62,7 +62,37 @@ export default function QuizResults() {
   }, [result, selectedAnswers]);
 
   if (!result) {
-    return <div>Loading results...</div>;
+    return (
+      <div className="w-full max-w-4xl mx-auto p-6 text-center">
+        <div className="text-red-600 mb-4">
+          <h2 className="text-2xl font-bold mb-2">Unable to Calculate Results</h2>
+          <p>There was an error calculating your quiz results. Please try taking the quiz again.</p>
+        </div>
+        <button
+          onClick={() => resetQuiz()}
+          className="px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold transition-colors duration-200 shadow-lg hover:shadow-xl"
+        >
+          Retake Quiz
+        </button>
+      </div>
+    );
+  }
+
+  if (!result.winningClan) {
+    return (
+      <div className="w-full max-w-4xl mx-auto p-6 text-center">
+        <div className="text-red-600 mb-4">
+          <h2 className="text-2xl font-bold mb-2">No Winning Clan Found</h2>
+          <p>There was an error determining your clan. Please try taking the quiz again.</p>
+        </div>
+        <button
+          onClick={() => resetQuiz()}
+          className="px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold transition-colors duration-200 shadow-lg hover:shadow-xl"
+        >
+          Retake Quiz
+        </button>
+      </div>
+    );
   }
 
   const { winningClan, scores, totalQuestions } = result;
