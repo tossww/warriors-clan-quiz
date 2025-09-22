@@ -96,9 +96,24 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
   nextQuestion: () => {
     const state = get();
     const nextIndex = state.currentQuestionIndex + 1;
-    
+
+    console.log('nextQuestion called - current index:', state.currentQuestionIndex, 'next index:', nextIndex, 'total questions:', state.randomizedQuestions.length);
+
     if (nextIndex >= state.randomizedQuestions.length) {
+      // Ensure all questions have been answered before completing
+      const answeredCount = Object.keys(state.selectedAnswers).length;
+      const questionCount = state.randomizedQuestions.length;
+
+      console.log(`Quiz completion check - Answered ${answeredCount} out of ${questionCount} questions`);
+
+      if (answeredCount < questionCount) {
+        console.warn('Not all questions answered, but reaching end of quiz');
+      }
+
       // Quiz complete
+      console.log('Quiz complete! Setting isComplete to true');
+      console.log('Final scores:', state.clanScores);
+      console.log('Selected answers:', state.selectedAnswers);
       set({ isComplete: true });
     } else {
       set({ currentQuestionIndex: nextIndex });
@@ -177,7 +192,18 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
 
   getQuizResult: () => {
     const state = get();
-    if (!state.isComplete) return null;
+    console.log('getQuizResult called - state:', {
+      isComplete: state.isComplete,
+      clanScores: state.clanScores,
+      selectedAnswers: state.selectedAnswers,
+      randomizedQuestions: state.randomizedQuestions?.length,
+      currentQuestionIndex: state.currentQuestionIndex
+    });
+
+    if (!state.isComplete) {
+      console.log('Quiz not complete yet');
+      return null;
+    }
 
     // Ensure we have scores and questions
     if (!state.clanScores || Object.keys(state.clanScores).length === 0) {
@@ -190,16 +216,23 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
       return null;
     }
 
-    // Ensure we have at least some answers selected
-    if (!state.selectedAnswers || Object.keys(state.selectedAnswers).length === 0) {
-      console.error('No answers selected');
-      return null;
+    // Check if all questions have been answered
+    const answeredCount = Object.keys(state.selectedAnswers).length;
+    const questionCount = state.randomizedQuestions.length;
+
+    console.log(`Answered ${answeredCount} out of ${questionCount} questions`);
+
+    if (answeredCount < questionCount) {
+      console.error(`Not all questions answered! Only ${answeredCount} out of ${questionCount} answered`);
+      console.log('Selected answers:', state.selectedAnswers);
+      console.log('Question IDs:', state.randomizedQuestions.map(q => q.id));
+      // Don't return null, continue with partial results
     }
 
     // Find winning clan
-    let maxScore = 0;
+    let maxScore = -1;  // Start with -1 to handle case where all scores are 0
     let winningClanId = '';
-    
+
     Object.entries(state.clanScores).forEach(([clanId, score]) => {
       if (score > maxScore) {
         maxScore = score;
@@ -207,13 +240,20 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
       }
     });
 
-    // Handle tie-breaker - if no clear winner, pick first clan with max score
-    if (winningClanId === '') {
+    // Handle tie-breaker or no answers - pick first clan with max score
+    if (winningClanId === '' || maxScore === 0) {
+      console.log('No clear winner or all scores are 0, using tie-breaker logic');
       const maxScoreEntries = Object.entries(state.clanScores).filter(([, score]) => score === maxScore);
       if (maxScoreEntries.length > 0) {
         winningClanId = maxScoreEntries[0][0];
+      } else {
+        // Absolute fallback - use first clan
+        winningClanId = Object.keys(state.clanScores)[0] || 'thunderclan';
       }
     }
+
+    console.log('Winning clan ID:', winningClanId, 'with score:', maxScore);
+    console.log('All scores:', state.clanScores);
 
     const winningClan = getClanById(winningClanId);
     if (!winningClan) {
@@ -221,6 +261,7 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
       // Fallback to first clan if something goes wrong
       const fallbackClan = clans[0];
       if (fallbackClan) {
+        console.log('Using fallback clan:', fallbackClan.name);
         return {
           winningClan: fallbackClan,
           scores: state.clanScores,

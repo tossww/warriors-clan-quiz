@@ -11,6 +11,8 @@ export default function QuizQuestion() {
     selectAnswer,
     nextQuestion,
     getProgressPercentage,
+    currentQuestionIndex,
+    randomizedQuestions,
   } = useQuizStore();
 
   const currentQuestion = getCurrentQuestion();
@@ -23,6 +25,7 @@ export default function QuizQuestion() {
 
   const selectedAnswerId = selectedAnswers[currentQuestion.id];
   const canProceed = !!selectedAnswerId;
+  const isLastQuestion = currentQuestionIndex === randomizedQuestions.length - 1;
 
   const handleAnswerSelect = (answerId: string) => {
     selectAnswer(currentQuestion.id, answerId);
@@ -30,7 +33,10 @@ export default function QuizQuestion() {
 
   const handleNext = () => {
     if (canProceed) {
+      console.log('handleNext - proceeding to next question or completion');
       nextQuestion();
+    } else {
+      console.log('handleNext - cannot proceed, no answer selected');
     }
   };
 
@@ -112,7 +118,7 @@ export default function QuizQuestion() {
           whileHover={canProceed ? { scale: 1.05 } : {}}
           whileTap={canProceed ? { scale: 0.95 } : {}}
         >
-          Next Question
+          {isLastQuestion ? 'See Results' : 'Next Question'}
         </motion.button>
       </div>
     </motion.div>
