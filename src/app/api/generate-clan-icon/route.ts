@@ -200,67 +200,96 @@ function generateFallbackSvg(clanName: string, color: string, traits: string[]):
   const b = parseInt(darkerColor.substr(4, 2), 16);
   const darker = `#${Math.round(r * 0.8).toString(16).padStart(2, '0')}${Math.round(g * 0.8).toString(16).padStart(2, '0')}${Math.round(b * 0.8).toString(16).padStart(2, '0')}`;
 
-  // Hand-crafted Warriors-inspired symbols
+  // Minimalist geometric icons inspired by official Warriors merchandise
   const symbols: { [key: string]: string } = {
     'ThunderClan': `
-      <!-- Lightning bolt -->
-      <path d="M 128 60 L 108 100 L 125 100 L 115 140 L 135 140 L 120 180 L 150 110 L 133 110 L 143 70 Z"
-            fill="${color}" stroke="${color}" stroke-width="2"/>
-      <!-- Oak leaves -->
-      <path d="M 100 75 Q 90 70, 85 75 Q 80 80, 85 85 Q 90 80, 100 75 Z" fill="${color}" opacity="0.7"/>
-      <path d="M 156 75 Q 166 70, 171 75 Q 176 80, 171 85 Q 166 80, 156 75 Z" fill="${color}" opacity="0.7"/>
+      <!-- Cat silhouette -->
+      <path d="M 128 95 Q 100 95, 95 115 Q 95 130, 110 140 L 110 160 L 120 160 L 120 145 L 136 145 L 136 160 L 146 160 L 146 140 Q 161 130, 161 115 Q 156 95, 128 95 Z"
+            fill="${color}"/>
+      <!-- Cat ears -->
+      <path d="M 105 95 L 100 75 L 115 85 Z" fill="${color}"/>
+      <path d="M 151 95 L 156 75 L 141 85 Z" fill="${color}"/>
+      <!-- Lightning bolt in center -->
+      <path d="M 128 105 L 120 120 L 128 120 L 124 130 L 136 115 L 128 115 L 132 105 Z"
+            fill="white"/>
+      <!-- Angry eyes -->
+      <path d="M 115 108 L 120 110" stroke="white" stroke-width="3" stroke-linecap="round"/>
+      <path d="M 141 108 L 136 110" stroke="white" stroke-width="3" stroke-linecap="round"/>
     `,
     'RiverClan': `
-      <!-- Fish -->
-      <ellipse cx="128" cy="95" rx="25" ry="12" fill="${color}"/>
-      <path d="M 148 95 L 158 88 L 158 102 Z" fill="${color}"/>
-      <circle cx="115" cy="93" r="2" fill="white"/>
-      <!-- Water waves -->
-      <path d="M 88 120 Q 108 115, 128 120 Q 148 115, 168 120" stroke="${color}" stroke-width="3" fill="none"/>
-      <path d="M 88 135 Q 108 130, 128 135 Q 148 130, 168 135" stroke="${color}" stroke-width="3" fill="none"/>
-      <path d="M 88 150 Q 108 145, 128 150 Q 148 145, 168 150" stroke="${color}" stroke-width="3" fill="none"/>
+      <!-- Cat silhouette -->
+      <path d="M 128 95 Q 100 95, 95 115 Q 95 130, 110 140 L 110 160 L 120 160 L 120 145 L 136 145 L 136 160 L 146 160 L 146 140 Q 161 130, 161 115 Q 156 95, 128 95 Z"
+            fill="${color}"/>
+      <!-- Cat ears -->
+      <path d="M 105 95 L 100 75 L 115 85 Z" fill="${color}"/>
+      <path d="M 151 95 L 156 75 L 141 85 Z" fill="${color}"/>
+      <!-- Wave pattern -->
+      <path d="M 110 120 Q 118 115, 128 120 Q 138 115, 146 120" stroke="white" stroke-width="3" fill="none"/>
+      <path d="M 110 128 Q 118 123, 128 128 Q 138 123, 146 128" stroke="white" stroke-width="3" fill="none"/>
+      <!-- Peaceful eyes -->
+      <circle cx="118" cy="110" r="2" fill="white"/>
+      <circle cx="138" cy="110" r="2" fill="white"/>
     `,
     'WindClan': `
-      <!-- Rabbit silhouette -->
-      <ellipse cx="128" cy="110" rx="18" ry="15" fill="${color}"/>
-      <ellipse cx="145" cy="108" rx="8" ry="5" fill="${color}"/>
-      <ellipse cx="118" cy="95" rx="4" ry="10" fill="${color}" transform="rotate(-15 118 95)"/>
-      <ellipse cx="125" cy="95" rx="4" ry="10" fill="${color}" transform="rotate(5 125 95)"/>
-      <!-- Wind streaks -->
-      <path d="M 85 130 Q 105 128, 125 130" stroke="${color}" stroke-width="2" fill="none" opacity="0.6"/>
-      <path d="M 90 140 Q 110 138, 130 140" stroke="${color}" stroke-width="2" fill="none" opacity="0.6"/>
-      <path d="M 85 150 Q 105 148, 125 150" stroke="${color}" stroke-width="2" fill="none" opacity="0.6"/>
+      <!-- Cat silhouette -->
+      <path d="M 128 95 Q 100 95, 95 115 Q 95 130, 110 140 L 110 160 L 120 160 L 120 145 L 136 145 L 136 160 L 146 160 L 146 140 Q 161 130, 161 115 Q 156 95, 128 95 Z"
+            fill="${color}"/>
+      <!-- Cat ears -->
+      <path d="M 105 95 L 100 75 L 115 85 Z" fill="${color}"/>
+      <path d="M 151 95 L 156 75 L 141 85 Z" fill="${color}"/>
+      <!-- Wind swirls -->
+      <path d="M 108 115 Q 118 113, 128 115" stroke="white" stroke-width="2" fill="none"/>
+      <path d="M 108 122 Q 118 120, 128 122" stroke="white" stroke-width="2" fill="none"/>
+      <path d="M 128 115 Q 138 113, 148 115" stroke="white" stroke-width="2" fill="none"/>
+      <path d="M 128 122 Q 138 120, 148 122" stroke="white" stroke-width="2" fill="none"/>
+      <!-- Alert eyes -->
+      <circle cx="118" cy="108" r="3" fill="white"/>
+      <circle cx="138" cy="108" r="3" fill="white"/>
     `,
     'ShadowClan': `
-      <!-- Pine tree -->
-      <path d="M 128 70 L 108 100 L 118 100 L 103 125 L 113 125 L 98 150 L 158 150 L 143 125 L 153 125 L 138 100 L 148 100 Z"
+      <!-- Cat silhouette -->
+      <path d="M 128 95 Q 100 95, 95 115 Q 95 130, 110 140 L 110 160 L 120 160 L 120 145 L 136 145 L 136 160 L 146 160 L 146 140 Q 161 130, 161 115 Q 156 95, 128 95 Z"
             fill="${color}"/>
-      <!-- Crescent moon -->
-      <path d="M 155 80 Q 165 85, 165 95 Q 165 105, 155 110 Q 160 105, 160 95 Q 160 85, 155 80 Z"
-            fill="${color}" opacity="0.8"/>
+      <!-- Cat ears -->
+      <path d="M 105 95 L 100 75 L 115 85 Z" fill="${color}"/>
+      <path d="M 151 95 L 156 75 L 141 85 Z" fill="${color}"/>
+      <!-- Star/mystery symbol -->
+      <path d="M 128 115 L 131 124 L 140 124 L 133 129 L 136 138 L 128 133 L 120 138 L 123 129 L 116 124 L 125 124 Z"
+            fill="white"/>
+      <!-- Mysterious eyes - half closed -->
+      <rect x="113" y="108" width="10" height="2" fill="white"/>
+      <rect x="133" y="108" width="10" height="2" fill="white"/>
     `,
     'SkyClan': `
-      <!-- Tree trunk -->
-      <rect x="123" y="110" width="10" height="50" fill="${color}"/>
-      <!-- Branches -->
-      <path d="M 128 110 L 108 90 M 128 120 L 148 100 M 128 130 L 108 115 M 128 140 L 148 125"
-            stroke="${color}" stroke-width="4" stroke-linecap="round"/>
-      <!-- Cat paw climbing -->
-      <circle cx="115" cy="125" r="4" fill="${color}"/>
-      <circle cx="108" cy="120" r="2" fill="${color}"/>
-      <circle cx="110" cy="115" r="2" fill="${color}"/>
-      <circle cx="115" cy="117" r="2" fill="${color}"/>
+      <!-- Cat silhouette -->
+      <path d="M 128 95 Q 100 95, 95 115 Q 95 130, 110 140 L 110 160 L 120 160 L 120 145 L 136 145 L 136 160 L 146 160 L 146 140 Q 161 130, 161 115 Q 156 95, 128 95 Z"
+            fill="${color}"/>
+      <!-- Cat ears -->
+      <path d="M 105 95 L 100 75 L 115 85 Z" fill="${color}"/>
+      <path d="M 151 95 L 156 75 L 141 85 Z" fill="${color}"/>
+      <!-- Tree/branch pattern -->
+      <rect x="126" y="115" width="4" height="20" fill="white"/>
+      <path d="M 128 115 L 118 108 M 128 120 L 138 113 M 128 125 L 118 118"
+            stroke="white" stroke-width="3" stroke-linecap="round"/>
+      <!-- Determined eyes -->
+      <path d="M 113 108 L 123 108" stroke="white" stroke-width="3" stroke-linecap="round"/>
+      <path d="M 143 108 L 133 108" stroke="white" stroke-width="3" stroke-linecap="round"/>
     `,
     'Tribe of Rushing Water': `
-      <!-- Mountain -->
-      <path d="M 128 65 L 88 160 L 168 160 Z" fill="${color}"/>
-      <!-- Snow cap -->
-      <path d="M 128 65 L 113 95 L 143 95 Z" fill="white" opacity="0.8"/>
-      <!-- Waterfall -->
-      <rect x="125" y="90" width="6" height="40" fill="white" opacity="0.6"/>
-      <rect x="125" y="135" width="6" height="25" fill="${darker}" opacity="0.4"/>
-      <!-- Cave entrance -->
-      <ellipse cx="128" cy="145" rx="15" ry="10" fill="${darker}"/>
+      <!-- Cat silhouette -->
+      <path d="M 128 95 Q 100 95, 95 115 Q 95 130, 110 140 L 110 160 L 120 160 L 120 145 L 136 145 L 136 160 L 146 160 L 146 140 Q 161 130, 161 115 Q 156 95, 128 95 Z"
+            fill="${color}"/>
+      <!-- Cat ears -->
+      <path d="M 105 95 L 100 75 L 115 85 Z" fill="${color}"/>
+      <path d="M 151 95 L 156 75 L 141 85 Z" fill="${color}"/>
+      <!-- Mountain peak -->
+      <path d="M 128 108 L 118 125 L 138 125 Z" fill="white"/>
+      <path d="M 128 108 L 123 117 L 133 117 Z" fill="${color}"/>
+      <!-- Waterfall lines -->
+      <rect x="127" y="125" width="2" height="10" fill="white"/>
+      <!-- Wise eyes -->
+      <circle cx="118" cy="108" r="2" fill="white"/>
+      <circle cx="138" cy="108" r="2" fill="white"/>
     `
   };
 
@@ -274,6 +303,6 @@ function generateFallbackSvg(clanName: string, color: string, traits: string[]):
   <!-- White inner circle for symbol background -->
   <circle cx="128" cy="128" r="100" fill="white" />
   <!-- Clan symbol in center -->
-  <path d="${symbol}" fill="${color}" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill-rule="evenodd" />
+  ${symbol}
 </svg>`;
 }
