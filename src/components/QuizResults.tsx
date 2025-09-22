@@ -5,48 +5,12 @@ import { useEffect, useState } from 'react';
 import { useQuizStore } from '@/hooks/useQuizStore';
 import { clans } from '@/data/clans';
 import { Clan } from '@/types';
-
-// Create SVG fallback image for clans
-const createClanImageSVG = (clan: Clan): string => {
-  // Use only the first letter to avoid encoding issues
-  const displayChar = clan.name.charAt(0).toUpperCase();
-
-  const svg = `
-    <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:${clan.color};stop-opacity:1" />
-          <stop offset="100%" style="stop-color:${clan.color};stop-opacity:0.8" />
-        </linearGradient>
-      </defs>
-      <circle cx="80" cy="80" r="80" fill="url(#grad)"/>
-      <text x="80" y="90" text-anchor="middle" fill="white" font-size="48" font-weight="bold">${displayChar}</text>
-      <text x="80" y="140" text-anchor="middle" fill="white" font-size="12" font-weight="bold">${clan.name}</text>
-    </svg>
-  `;
-
-  // Properly encode the SVG string to handle all characters
-  const encodedSvg = encodeURIComponent(svg);
-  return `data:image/svg+xml;charset=utf-8,${encodedSvg}`;
-};
+import ClanIcon from './ClanIcon';
 
 export default function QuizResults() {
-  const { getQuizResult, resetQuiz, selectedAnswers } = useQuizStore();
+  const { getQuizResult, resetQuiz } = useQuizStore();
   const result = getQuizResult();
   console.log('QuizResults component - result:', result);
-  const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
-  const [imageLoading, setImageLoading] = useState(true);
-
-  useEffect(() => {
-    if (result && result.winningClan) {
-      // Always use SVG fallback to prevent API errors
-      const svgFallback = createClanImageSVG(result.winningClan);
-      setGeneratedImageUrl(svgFallback);
-      setImageLoading(false);
-
-      console.log(`Using SVG fallback for ${result.winningClan.name}`);
-    }
-  }, [result]);
 
   if (!result) {
     return (
@@ -103,33 +67,8 @@ export default function QuizResults() {
         transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
         className="mb-8"
       >
-        <div className="w-40 h-40 mx-auto rounded-full overflow-hidden shadow-2xl border-4 border-white">
-          {imageLoading ? (
-            <div
-              className="w-full h-full flex items-center justify-center text-white text-4xl font-bold"
-              style={{ backgroundColor: winningClan.color }}
-            >
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-            </div>
-          ) : generatedImageUrl ? (
-            <img
-              src={generatedImageUrl}
-              alt={`${winningClan.name} generated image`}
-              className="w-full h-full object-cover"
-              onError={() => {
-                // Fallback to SVG if image fails to load
-                const svgFallback = createClanImageSVG(winningClan);
-                setGeneratedImageUrl(svgFallback);
-              }}
-            />
-          ) : (
-            <div
-              className="w-full h-full flex items-center justify-center text-white text-4xl font-bold"
-              style={{ backgroundColor: winningClan.color }}
-            >
-              {winningClan.icon || winningClan.name.charAt(0)}
-            </div>
-          )}
+        <div className="mx-auto rounded-full overflow-hidden shadow-2xl border-4 border-white" style={{ width: 160, height: 160 }}>
+          <ClanIcon clan={winningClan} size={160} />
         </div>
       </motion.div>
 

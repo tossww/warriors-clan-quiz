@@ -153,7 +153,7 @@ export default function LandingPage({ onStartQuiz }: LandingPageProps) {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1, type: "spring", stiffness: 200 }}
-          className="mb-4"
+          className="mb-4 flex gap-4 justify-center flex-wrap"
         >
           <button
             onClick={onStartQuiz}
@@ -161,6 +161,13 @@ export default function LandingPage({ onStartQuiz }: LandingPageProps) {
           >
             Begin Your Journey
           </button>
+
+          <a
+            href="/icons"
+            className="px-10 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white text-lg font-bold rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 inline-block"
+          >
+            View Clan Icons
+          </a>
         </motion.div>
 
         {/* Compact Footer */}
